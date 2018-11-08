@@ -93,10 +93,8 @@ def learn_naive_bayes_text(examples, V, dataset_path):
             vocabulary[w][v]['P'] = (nk+1)/(n+len(vocabulary))
     return {'class_prob': P, 'vocabulary': vocabulary}
 
-examples, V = get_examples_and_class('DataSet')
-trained_params = learn_naive_bayes_text(examples, V, 'DataSet')
-
 def get_test_vocabulary(path, main_vocabulary):
+    "Create Vocabulary for test data"
     current_state = 0
     lexeme = ''
     test_vocabulary = {}
@@ -131,6 +129,7 @@ def get_test_vocabulary(path, main_vocabulary):
 
 # Classify using Naive Bayes Algorithm
 def classify_naive_bayes_text(path, trained_params, V):
+    "Test documents path, class labels and object returned from training are taken as parameters. returns a string with class label."
     class_label = ''
     Vnb = {}
     vocabulary = get_test_vocabulary(path, trained_params['vocabulary'])
@@ -145,6 +144,3 @@ def classify_naive_bayes_text(path, trained_params, V):
             max = Vnb[i]
             class_label = i 
     return class_label 
-
-class_label = classify_naive_bayes_text('Test/54485', trained_params, V) 
-print(class_label)
