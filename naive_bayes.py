@@ -47,8 +47,9 @@ def get_all_tokens(examples, dataset_path):
                                     next = temp[key]
                                     if next == 'retract':
                                         lexeme = lexeme[:-1]
-                                        if re.match(r'[.,:]', lexeme[-1]):
-                                            lexeme = lexeme[:-1]
+                                        if lexeme:
+                                            if re.match(r'[.,:]', lexeme[-1]):
+                                                lexeme = lexeme[:-1]
                                         # add to vocabulary
                                         n = 0
                                         if lexeme in vocabulary:
@@ -108,8 +109,9 @@ def get_test_vocabulary(path, main_vocabulary):
                     next = temp[key]
                     if next == 'retract':
                         lexeme = lexeme[:-1]
-                        if re.match(r'[.,:]', lexeme[-1]):
-                            lexeme = lexeme[:-1]
+                        if lexeme:
+                            if re.match(r'[.,:]', lexeme[-1]):
+                                lexeme = lexeme[:-1]
                         # check if 'lexeme' is present in 'main_vocabulary'
                         if lexeme in main_vocabulary:
                             # add 'lexeme' to test_vocabulary
@@ -133,11 +135,20 @@ def classify_naive_bayes_text(path, trained_params, V):
     class_label = ''
     Vnb = {}
     vocabulary = get_test_vocabulary(path, trained_params['vocabulary'])
+    if not vocabulary:
+        return 'Cannot classify. Vocabulary is empty.'
     for v in V:
         value = trained_params['class_prob'][v]
         for w in vocabulary:
             value *= vocabulary[w][v]['P']
         Vnb[v] = value
+    flag = 1
+    for i in Vnb:
+        if Vnb[i]:
+            flag = 0
+            break
+    if flag:
+        return 'Cannot classify. Probability is too low.'
     max = 0
     for i in Vnb:
         if max < Vnb[i]:
